@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/mydb_privateclub
     username: myuser
-    password: myspassword
+    password: mypassword
     driver-class-name: org.postgresql.Driver
 
   jpa:
