@@ -31,17 +31,6 @@ public class QrCode {
     private LocalDateTime createdAt;
 
 
-    public QrCode(){
-
-    }
-
-    public QrCode(UUID qrCode, Participant participant, boolean isActive, LocalDateTime createdAt) {
-        this.qrCode = qrCode;
-        this.participant = participant;
-        this.isActive = isActive;
-        this.createdAt = createdAt;
-    }
-
     public UUID getId() {
         return id;
     }
