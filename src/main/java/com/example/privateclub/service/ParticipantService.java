@@ -34,9 +34,6 @@ public class ParticipantService {
         if (participant.getEmail() == null || participant.getEmail().isEmpty()) {
             throw new RuntimeException("Email участника не может быть пустым");
         }
-        if (participant.getCreatedDate() == null) {
-            throw new RuntimeException("Дата создания участника не может быть пустой");
-        }
         return repository.save(participant);
     }
 

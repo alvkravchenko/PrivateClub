@@ -1,34 +1,29 @@
-package com.example.privateclub.entity;
-
-import jakarta.persistence.*;
+package com.example.privateclub.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "participants")
-public class Participant {
+public class ParticipantResponseDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-
-    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
-
-    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
-
-    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
-
-    @Column(name = "phone", unique = true, length = 15)
     private String phone;
-
-    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    public ParticipantResponseDTO(){
+
+    }
+
+    public ParticipantResponseDTO(UUID id, String firstName, String lastName, String email, String phone, LocalDateTime createdAt) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.createdAt = createdAt;
+    }
 
     public UUID getId() {
         return id;
@@ -74,16 +69,7 @@ public class Participant {
         return createdAt;
     }
 
-
-    public Participant() {
-
-    }
-
-    public Participant(String firstName, String lastName, String email, String phone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.phone = phone;
-
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

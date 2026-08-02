@@ -1,0 +1,74 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3
+      author: taksebekoder
+      changes:
+        - insert:
+            tableName: participants
+            columns:
+              - column:
+                 name: id
+                 value: "11111111-1111-1111-1111-111111111111"
+              - column:
+                 name: first_name
+                 value: "Alehandro"
+              - column:
+                 name: last_name
+                 value: "Vasovskiy"
+              - column:
+                 name: email
+                 value: "AlehandroVasovskiy@bulka.ru"
+        - insert:
+            tableName: participants
+            columns:
+              - column:
+                 name: id
+                 value: "22222222-2222-2222-2222-222222222222"
+              - column:
+                 name: first_name
+                 value: "Roberto"
+              - column:
+                 name: last_name
+                 value: "Bobrovskiy"
+              - column:
+                 name: email
+                 value: "RobertoBobrovskiy@snikers.ru"
+
+  - changeSet:
+      id: 4
+      author: taksebekoder
+      changes:
+        - insert:
+            tableName: qr_codes
+            columns:
+              - column:
+                 name: qr_code
+                 value: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+              - column:
+                 name: participant_id
+                 value: "11111111-1111-1111-1111-111111111111"
+              - column:
+                 name: is_active
+                 value: "true"
+        - insert:
+            tableName: qr_codes
+            columns:
+              - column:
+                 name: qr_code
+                 value: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+              - column:
+                 name: participant_id
+                 value: "22222222-2222-2222-2222-222222222222"
+              - column:
+                 name: is_active
+                 value: "true"
+
+
+
+
+
+
+
+
+
+

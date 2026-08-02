@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface QrCodeRepository extends JpaRepository<QrCode, UUID> {
-    Optional<QrCode> findByQrCode(UUID qrCode);
+
 }

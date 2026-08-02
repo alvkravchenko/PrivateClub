@@ -1,3 +1,5 @@
-databaseChangeLog:
+databaseChangeLog: # Корневой элемент
+  - include: # включить другой файл
+      file: db/changelog/v1/01-create-tables.yaml # путь к файлу
   - include:
-      file: db/changelog/v1/01-create-tables.yaml
+      file: db/changelog/v1/02-insert-data.yaml

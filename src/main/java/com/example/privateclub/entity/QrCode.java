@@ -12,16 +12,17 @@ public class QrCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
 
-    @Column(name = "qr_code", unique = true, updatable = false, nullable = false)
-    private UUID qrCode;
+    @Column(name = "qr_code", unique = true, nullable = false)
+    private UUID QrCodeValue;
 
-    @ManyToOne
+    @ManyToOne // связи, много объектов класса QrCode погут ссылаться к одному объекту класса Participant
     @JoinColumn(name = "participant_id", nullable = false)
-    private Participant participant;
+    // @JoinColumn - внешний ключ (колонка participant_id в таблице qr_codes)
+    private Participant participant; // Сам объект участника (связь с таблицей participants)
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
@@ -31,43 +32,39 @@ public class QrCode {
     private LocalDateTime createdAt;
 
 
-    public UUID getId() {
-        return id;
+    public QrCode (){
+
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public UUID getQrCode() {
-        return qrCode;
-    }
-
-    public void setQrCode(UUID qrCode) {
-        this.qrCode = qrCode;
-    }
-
-    public Participant getParticipant() {
-        return participant;
+    public QrCode(Participant participant, boolean isActive, LocalDateTime createdAt) {
+        this.participant = participant;
     }
 
     public void setParticipant(Participant participant) {
         this.participant = participant;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
     public void setActive(boolean active) {
         isActive = active;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public UUID getId() {
+        return id;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public UUID getQrCodeValue() {
+        return QrCodeValue;
+    }
+
+    public Participant getParticipant() {
+        return participant;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
