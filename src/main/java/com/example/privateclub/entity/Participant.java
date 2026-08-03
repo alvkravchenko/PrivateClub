@@ -1,6 +1,7 @@
 package com.example.privateclub.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -26,6 +27,7 @@ public class Participant {
     @Column(name = "phone", unique = true, length = 15)
     private String phone;
 
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 

@@ -17,7 +17,7 @@ public class QrCode {
 
 
     @Column(name = "qr_code", unique = true, nullable = false)
-    private UUID QrCodeValue;
+    private UUID qrCodeValue;
 
     @ManyToOne // связи, много объектов класса QrCode погут ссылаться к одному объекту класса Participant
     @JoinColumn(name = "participant_id", nullable = false)
@@ -27,8 +27,12 @@ public class QrCode {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    public void setQrCodeValue(UUID qrCodeValue) {
+        this.qrCodeValue = qrCodeValue;
+    }
+
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
 
@@ -53,7 +57,7 @@ public class QrCode {
     }
 
     public UUID getQrCodeValue() {
-        return QrCodeValue;
+        return qrCodeValue;
     }
 
     public Participant getParticipant() {
