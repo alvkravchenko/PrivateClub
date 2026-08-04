@@ -1,6 +1,8 @@
 package com.example.privateclub.service;
 
 import com.example.privateclub.entity.Participant;
+import com.example.privateclub.exception.BadRequestException;
+import com.example.privateclub.exception.NotFoundException;
 import com.example.privateclub.repository.ParticipantRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +23,18 @@ public class ParticipantService {
     }
 
     public Participant findParticipantById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Участник с id " + id + " не найден"));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("Участник с id " + id + " не найден"));
     }
 
     public Participant addParticipant(Participant participant) {
         if (participant.getFirstName() == null || participant.getFirstName().isEmpty()) {
-            throw new RuntimeException("Имя участника не может быть пустым");
+            throw new BadRequestException("Имя участника не может быть пустым");
         }
         if (participant.getLastName() == null || participant.getLastName().isEmpty()) {
-            throw new RuntimeException("Фамилия участника не может быть пустой");
+            throw new BadRequestException("Фамилия участника не может быть пустой");
         }
         if (participant.getEmail() == null || participant.getEmail().isEmpty()) {
-            throw new RuntimeException("Email участника не может быть пустым");
+            throw new BadRequestException("Email участника не может быть пустым");
         }
         return repository.save(participant);
     }
@@ -48,7 +50,7 @@ public class ParticipantService {
 
     public void deleteParticipant(UUID id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Участник с ID " + id + " не найден");
+            throw new NotFoundException("Участник с ID " + id + " не найден");
         }
         repository.deleteById(id);
     }

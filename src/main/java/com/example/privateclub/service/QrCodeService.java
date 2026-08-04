@@ -2,6 +2,8 @@ package com.example.privateclub.service;
 
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.entity.QrCode;
+import com.example.privateclub.exception.ConflictException;
+import com.example.privateclub.exception.NotFoundException;
 import com.example.privateclub.repository.QrCodeRepository;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +26,12 @@ public class QrCodeService {
         return repository.findAll();
     }
     public QrCode findByQrCodeId(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("QR код не найден"));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("QR код не найден"));
     }
 
     public QrCode findByQrCodeValue(UUID qrCodeValue) {
         return repository.findByQrCodeValue(qrCodeValue)
-                .orElseThrow(() -> new RuntimeException("QR-код не найден"));
+                .orElseThrow(() -> new NotFoundException("QR-код не найден"));
     }
 
     public QrCode createQrForParticipant(UUID participantId) { // принимает id участника
@@ -49,7 +51,7 @@ public class QrCodeService {
     public Participant enterQrCode(UUID qrCodeValue) {  //  параметр — значение QR-кода
         QrCode qrCode = findByQrCodeValue(qrCodeValue);  //  поиск по значению
         if (!qrCode.isActive()) {
-            throw new RuntimeException("QR-код уже использован");
+            throw new ConflictException("QR-код уже использован");
         }
         Participant participant = qrCode.getParticipant();
         qrCode.setActive(false);
@@ -60,8 +62,9 @@ public class QrCodeService {
 
     public void deleteQrCode(UUID id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Qr с ID " + id + " не найден");
+            throw new NotFoundException("Qr с ID " + id + " не найден");
         }
+
         repository.deleteById(id);
     }
 
