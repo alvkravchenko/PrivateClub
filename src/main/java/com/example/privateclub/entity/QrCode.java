@@ -1,6 +1,9 @@
 package com.example.privateclub.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -8,6 +11,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "qr_codes")
+@Getter
+@Setter
+@NoArgsConstructor // пустой конструктор
 public class QrCode {
 
     @Id
@@ -27,48 +33,13 @@ public class QrCode {
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
 
-    public void setQrCodeValue(UUID qrCodeValue) {
-        this.qrCodeValue = qrCodeValue;
-    }
-
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
 
-    public QrCode (){
-
-    }
-
-    public QrCode(Participant participant, boolean isActive, LocalDateTime createdAt) {
+    public QrCode(Participant participant) {
         this.participant = participant;
     }
 
-    public void setParticipant(Participant participant) {
-        this.participant = participant;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public UUID getQrCodeValue() {
-        return qrCodeValue;
-    }
-
-    public Participant getParticipant() {
-        return participant;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
 }

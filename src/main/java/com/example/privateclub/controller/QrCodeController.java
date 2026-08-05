@@ -5,6 +5,8 @@ import com.example.privateclub.dto.QrCodeCreateDTO;
 import com.example.privateclub.dto.QrCodeResponseDTO;
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.entity.QrCode;
+import com.example.privateclub.mappers.ParticipantMapper;
+import com.example.privateclub.mappers.QrCodeMapper;
 import com.example.privateclub.repository.QrCodeRepository;
 import com.example.privateclub.service.QrCodeService;
 import org.springframework.web.bind.annotation.*;
@@ -17,43 +19,38 @@ import java.util.UUID;
 public class QrCodeController {
 
     private final QrCodeService service;
+    private final ParticipantMapper participantMapper;
+    private final QrCodeMapper qrCodeMapper;
 
-    public QrCodeController(QrCodeService service) {
+    public QrCodeController(QrCodeService service, ParticipantMapper participantMapper, QrCodeMapper qrCodeMapper) {
         this.service = service;
+        this.participantMapper = participantMapper;
+        this.qrCodeMapper= qrCodeMapper;
     }
 
     @GetMapping
     public List<QrCodeResponseDTO> getAllQrCodes() {
         List<QrCode> qrCodes = service.findAllQrCodes();
-        return qrCodes.stream().map(p -> new QrCodeResponseDTO(p.getId(),
-                p.getQrCodeValue(), p.getParticipant().getId(), p.isActive(), p.getCreatedAt()
-        )).toList();
+        return qrCodes.stream().map(p -> qrCodeMapper.responseDTO(p)).toList();
     }
 
     @GetMapping("/{id}")
     public QrCodeResponseDTO getQrCodeById(@PathVariable UUID id) {
         QrCode qrCode = service.findByQrCodeId(id);
-        return new QrCodeResponseDTO(qrCode.getId(), qrCode.getQrCodeValue(),
-                qrCode.getParticipant().getId(), qrCode.isActive(), qrCode.getCreatedAt());
+        return qrCodeMapper.responseDTO(qrCode);
     }
 
     @PostMapping
     public QrCodeResponseDTO createQrCodeByParticipiant(@RequestBody QrCodeCreateDTO codeCreateDTO) {
         QrCode code = service.createQrForParticipant(codeCreateDTO.getParticipantId());
-        return new QrCodeResponseDTO(code.getId(), code.getQrCodeValue(),
-                code.getParticipant().getId(), code.isActive(), code.getCreatedAt());
+        return qrCodeMapper.responseDTO(code);
     }
 
     @PostMapping("/enter/{qrCode}")
     public ParticipantResponseDTO enterByQrCode(@PathVariable UUID qrCode) {
         Participant participant = service.enterQrCode(qrCode);
 
-        return new ParticipantResponseDTO(participant.getId(),
-                participant.getFirstName(),
-                participant.getLastName(),
-                participant.getEmail(),
-                participant.getPhone(),
-                participant.getCreatedAt());
+        return participantMapper.toResponseDTO(participant);
     }
 
     @DeleteMapping("/{id}")

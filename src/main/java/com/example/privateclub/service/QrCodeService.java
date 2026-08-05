@@ -6,11 +6,13 @@ import com.example.privateclub.exception.ConflictException;
 import com.example.privateclub.exception.NotFoundException;
 import com.example.privateclub.repository.QrCodeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Transactional(readOnly = true)
 @Service
 public class QrCodeService {
 
@@ -25,8 +27,9 @@ public class QrCodeService {
     public List<QrCode> findAllQrCodes(){
         return repository.findAll();
     }
+
     public QrCode findByQrCodeId(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("QR код не найден"));
+        return repository.findByIdOrThrow(id);
     }
 
     public QrCode findByQrCodeValue(UUID qrCodeValue) {
@@ -34,6 +37,7 @@ public class QrCodeService {
                 .orElseThrow(() -> new NotFoundException("QR-код не найден"));
     }
 
+    @Transactional
     public QrCode createQrForParticipant(UUID participantId) { // принимает id участника
         Participant participant = participantService.findParticipantById(participantId); // поиск участника
         QrCode code = new QrCode();
@@ -41,13 +45,13 @@ public class QrCodeService {
         code.setParticipant(participant);
         return repository.save(code);
     }
-
+    @Transactional
     public QrCode updateQrCode(UUID id, QrCode updated) {
         QrCode inBase = findByQrCodeId(id);
         inBase.setParticipant(updated.getParticipant());
         return repository.save(inBase);
     }
-
+    @Transactional
     public Participant enterQrCode(UUID qrCodeValue) {  //  параметр — значение QR-кода
         QrCode qrCode = findByQrCodeValue(qrCodeValue);  //  поиск по значению
         if (!qrCode.isActive()) {
@@ -59,7 +63,7 @@ public class QrCodeService {
         createQrForParticipant(participant.getId());
         return participant;
     }
-
+    @Transactional
     public void deleteQrCode(UUID id) {
         if (!repository.existsById(id)) {
             throw new NotFoundException("Qr с ID " + id + " не найден");

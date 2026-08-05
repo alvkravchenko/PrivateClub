@@ -6,6 +6,7 @@ import com.example.privateclub.dto.ParticipantUpdateDTO;
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.mappers.ParticipantMapper;
 import com.example.privateclub.service.ParticipantService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,13 +38,13 @@ public class ParticipantController {
     }
 
     @PostMapping
-    public ParticipantResponseDTO createParticipant(@RequestBody ParticipantCreateDTO createDTO) {
+    public ParticipantResponseDTO createParticipant(@Valid @RequestBody ParticipantCreateDTO createDTO) {
         Participant saved = service.addParticipant(createDTO);
         return participantMapper.toResponseDTO(saved);
     }
 
     @PutMapping("/{id}")
-    public ParticipantResponseDTO updateParticipant(@PathVariable UUID id, @RequestBody ParticipantUpdateDTO updateDTO) {
+    public ParticipantResponseDTO updateParticipant(@PathVariable UUID id,@Valid @RequestBody ParticipantUpdateDTO updateDTO) {
 
         Participant saved = service.updateParticipant(id, updateDTO);
         return participantMapper.toResponseDTO(saved);

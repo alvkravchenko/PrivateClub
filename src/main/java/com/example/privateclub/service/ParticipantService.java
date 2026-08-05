@@ -7,12 +7,16 @@ import com.example.privateclub.exception.BadRequestException;
 import com.example.privateclub.exception.ConflictException;
 import com.example.privateclub.exception.NotFoundException;
 import com.example.privateclub.repository.ParticipantRepository;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+@Transactional(readOnly = true)
 @Service
+
 public class ParticipantService {
 
     private final ParticipantRepository repository;
@@ -26,24 +30,16 @@ public class ParticipantService {
     }
 
     public Participant findParticipantById(UUID id) {
-        return repository.findById(id).orElseThrow(() -> new NotFoundException("Участник с id " + id + " не найден"));
+        return repository.findByIdOrThrow(id);
     }
 
+    @Transactional
     public Participant addParticipant(ParticipantCreateDTO createDTO) {
 
-        if (createDTO.getFirstName() == null || createDTO.getFirstName().isEmpty()) {
-            throw new BadRequestException("Имя участника не может быть пустым");
-        }
-        if (createDTO.getLastName() == null || createDTO.getLastName().isEmpty()) {
-            throw new BadRequestException("Фамилия участника не может быть пустой");
-        }
-        if (createDTO.getEmail() == null || createDTO.getEmail().isEmpty()) {
-            throw new BadRequestException("Email участника не может быть пустым");
-        }
         if (repository.findByEmail(createDTO.getEmail()).isPresent()) {
             throw new ConflictException("Участник с таким Email существует");
         }
-        if (repository.findByPhone(createDTO.getPhone()).isPresent()){
+        if (repository.findByPhone(createDTO.getPhone()).isPresent()) {
             throw new ConflictException("Участник с таким phone существует");
         }
         Participant participant = new Participant(createDTO.getFirstName(),
@@ -51,16 +47,8 @@ public class ParticipantService {
         return repository.save(participant);
     }
 
+    @Transactional
     public Participant updateParticipant(UUID id, ParticipantUpdateDTO updateDTO) {
-        if (updateDTO.getFirstName() == null || updateDTO.getFirstName().isEmpty()) {
-            throw new BadRequestException("Имя участника не может быть пустым");
-        }
-        if (updateDTO.getLastName() == null || updateDTO.getLastName().isEmpty()) {
-            throw new BadRequestException("Фамилия участника не может быть пустой");
-        }
-        if (updateDTO.getEmail() == null || updateDTO.getEmail().isEmpty()) {
-            throw new BadRequestException("Email участника не может быть пустым");
-        }
 
         Participant inBase = findParticipantById(id);
         inBase.setFirstName(updateDTO.getFirstName());
@@ -70,6 +58,7 @@ public class ParticipantService {
         return repository.save(inBase);
     }
 
+    @Transactional
     public void deleteParticipant(UUID id) {
         if (!repository.existsById(id)) {
             throw new NotFoundException("Участник с ID " + id + " не найден");
