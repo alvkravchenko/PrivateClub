@@ -2,7 +2,9 @@ package com.example.privateclub.mappers;
 
 import com.example.privateclub.dto.QrCodeResponseDTO;
 import com.example.privateclub.entity.QrCode;
+import org.springframework.stereotype.Component;
 
+@Component
 public class QrCodeMapper {
     public QrCodeResponseDTO responseDTO(QrCode qrCode){
         return new QrCodeResponseDTO(
