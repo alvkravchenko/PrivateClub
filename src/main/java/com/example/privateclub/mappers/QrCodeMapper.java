@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class QrCodeMapper {
-    public QrCodeResponseDTO responseDTO(QrCode qrCode){
+    public QrCodeResponseDTO toResponseDTO(QrCode qrCode){
         return new QrCodeResponseDTO(
                 qrCode.getId(),
                 qrCode.getQrCodeValue(),

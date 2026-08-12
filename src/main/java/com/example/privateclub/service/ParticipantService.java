@@ -1,11 +1,12 @@
 package com.example.privateclub.service;
 
 import com.example.privateclub.dto.ParticipantCreateDTO;
+import com.example.privateclub.dto.ParticipantResponseDTO;
 import com.example.privateclub.dto.ParticipantUpdateDTO;
 import com.example.privateclub.entity.Participant;
-import com.example.privateclub.exception.BadRequestException;
 import com.example.privateclub.exception.ConflictException;
 import com.example.privateclub.exception.NotFoundException;
+import com.example.privateclub.mappers.ParticipantMapper;
 import com.example.privateclub.repository.ParticipantRepository;
 
 import org.springframework.stereotype.Service;
@@ -20,21 +21,26 @@ import java.util.UUID;
 public class ParticipantService {
 
     private final ParticipantRepository repository;
+    private final ParticipantMapper participantMapper;
 
-    public ParticipantService(ParticipantRepository repository) {
+    public ParticipantService(ParticipantRepository repository, ParticipantMapper participantMapper) {
         this.repository = repository;
+        this.participantMapper = participantMapper;
     }
 
-    public List<Participant> findAllParticipant() {
-        return repository.findAll();
+    public List<ParticipantResponseDTO> findAllParticipant() {
+        return repository.findAll().stream()
+                .map(participantMapper::toResponseDTO)
+                .toList();
     }
 
-    public Participant findParticipantById(UUID id) {
-        return repository.findByIdOrThrow(id);
+    public ParticipantResponseDTO findParticipantById(UUID id) {
+        Participant participant = repository.findByIdOrThrow(id);
+        return participantMapper.toResponseDTO(participant);
     }
 
     @Transactional
-    public Participant addParticipant(ParticipantCreateDTO createDTO) {
+    public ParticipantResponseDTO addParticipant(ParticipantCreateDTO createDTO) {
 
         if (repository.findByEmail(createDTO.getEmail()).isPresent()) {
             throw new ConflictException("Участник с таким Email существует");
@@ -44,18 +50,20 @@ public class ParticipantService {
         }
         Participant participant = new Participant(createDTO.getFirstName(),
                 createDTO.getLastName(), createDTO.getEmail(), createDTO.getPhone());
-        return repository.save(participant);
+        Participant saved = repository.save(participant);
+        return participantMapper.toResponseDTO(saved);
     }
 
     @Transactional
-    public Participant updateParticipant(UUID id, ParticipantUpdateDTO updateDTO) {
+    public ParticipantResponseDTO updateParticipant(UUID id, ParticipantUpdateDTO updateDTO) {
 
-        Participant inBase = findParticipantById(id);
-        inBase.setFirstName(updateDTO.getFirstName());
-        inBase.setLastName(updateDTO.getLastName());
-        inBase.setEmail(updateDTO.getEmail());
-        inBase.setPhone(updateDTO.getPhone());
-        return repository.save(inBase);
+        Participant participantEntity = findParticipantEntityById(id);
+        participantEntity.setFirstName(updateDTO.getFirstName());
+        participantEntity.setLastName(updateDTO.getLastName());
+        participantEntity.setEmail(updateDTO.getEmail());
+        participantEntity.setPhone(updateDTO.getPhone());
+        Participant saved = repository.save(participantEntity);
+        return participantMapper.toResponseDTO(saved);
     }
 
     @Transactional
@@ -64,5 +72,9 @@ public class ParticipantService {
             throw new NotFoundException("Участник с ID " + id + " не найден");
         }
         repository.deleteById(id);
+    }
+
+    public Participant findParticipantEntityById(UUID id) {
+        return repository.findByIdOrThrow(id);
     }
 }

@@ -3,8 +3,6 @@ package com.example.privateclub.controller;
 import com.example.privateclub.dto.ParticipantCreateDTO;
 import com.example.privateclub.dto.ParticipantResponseDTO;
 import com.example.privateclub.dto.ParticipantUpdateDTO;
-import com.example.privateclub.entity.Participant;
-import com.example.privateclub.mappers.ParticipantMapper;
 import com.example.privateclub.service.ParticipantService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -17,37 +15,31 @@ import java.util.UUID;
 public class ParticipantController {
 
     private final ParticipantService service;
-    private final ParticipantMapper participantMapper;
 
-    public ParticipantController(ParticipantService service, ParticipantMapper participantMapper) {
+
+    public ParticipantController(ParticipantService service) {
         this.service = service;
-        this.participantMapper = participantMapper;
+
     }
 
     @GetMapping
     public List<ParticipantResponseDTO> getAllParticipant() {
-        List<Participant> participants = service.findAllParticipant();
-
-        return participants.stream().map(p -> participantMapper.toResponseDTO(p)).toList();
+        return service.findAllParticipant();
     }
 
     @GetMapping("/{id}")
     public ParticipantResponseDTO getParticipantById(@PathVariable UUID id) {
-        Participant participant = service.findParticipantById(id);
-        return participantMapper.toResponseDTO(participant);
+        return service.findParticipantById(id);
     }
 
     @PostMapping
     public ParticipantResponseDTO createParticipant(@Valid @RequestBody ParticipantCreateDTO createDTO) {
-        Participant saved = service.addParticipant(createDTO);
-        return participantMapper.toResponseDTO(saved);
+        return service.addParticipant(createDTO);
     }
 
     @PutMapping("/{id}")
-    public ParticipantResponseDTO updateParticipant(@PathVariable UUID id,@Valid @RequestBody ParticipantUpdateDTO updateDTO) {
-
-        Participant saved = service.updateParticipant(id, updateDTO);
-        return participantMapper.toResponseDTO(saved);
+    public ParticipantResponseDTO updateParticipant(@PathVariable UUID id, @Valid @RequestBody ParticipantUpdateDTO updateDTO) {
+        return service.updateParticipant(id, updateDTO);
     }
 
     @DeleteMapping("/{id}")

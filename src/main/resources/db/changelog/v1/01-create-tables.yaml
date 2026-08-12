@@ -37,6 +37,7 @@ databaseChangeLog: # корневой элемент, здесь начинае�
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
 
+
   - changeSet: # набор изменений
       id: 2 # номер набора
       author: taksebekoder

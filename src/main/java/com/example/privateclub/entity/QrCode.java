@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor // пустой конструктор
+@SQLRestriction("deleted = false")
 public class QrCode {
 
     @Id
@@ -36,6 +38,9 @@ public class QrCode {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted = false;
 
 
     public QrCode(Participant participant) {

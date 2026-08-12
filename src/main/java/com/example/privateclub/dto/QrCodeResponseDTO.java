@@ -28,39 +28,25 @@ public class QrCodeResponseDTO {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public UUID getQrCode() {
         return qrCode;
     }
 
-    public void setQrCode(UUID qrCode) {
-        this.qrCode = qrCode;
-    }
 
     public UUID getParticipantId() {
         return participantId;
     }
 
-    public void setParticipantId(UUID participantId) {
-        this.participantId = participantId;
-    }
 
     public boolean isActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+
 }
