@@ -6,14 +6,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice // собирает обработчики для всего приложения
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class) // перехват исключения типо NotFound
+    @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException e) {
-        // Класс ResponseEntity, который представляет весь HTTP-ответ, тело этого ответа будет типа ErrorResponse
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(e.getMessage()));
-        // вернуть статус 404(NOT_FOUND) и положить в тело ответа сообщение из ошибки
+
     }
 
     @ExceptionHandler(BadRequestException.class)

@@ -1,6 +1,7 @@
 package com.example.privateclub.dto;
 
 import com.example.privateclub.entity.QrCode;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class QrCodeResponseDTO {
         return participantId;
     }
 
-
+    @JsonProperty("isActive")
     public boolean isActive() {
         return isActive;
     }

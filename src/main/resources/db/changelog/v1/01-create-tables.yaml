@@ -1,9 +1,9 @@
-databaseChangeLog: # корневой элемент, здесь начинается список изменений
-  - changeSet: # набор изменений
-      id: 1 # номер набора
+databaseChangeLog:
+  - changeSet:
+      id: 1
       author: taksebekoder
-      changes: # контейнер (список) с изменениями
-        - createTable: # команда создания таблицы
+      changes:
+        - createTable:
             tableName: participants
             columns:
               - column:
@@ -38,11 +38,11 @@ databaseChangeLog: # корневой элемент, здесь начинае�
                   defaultValueComputed: CURRENT_TIMESTAMP
 
 
-  - changeSet: # набор изменений
-      id: 2 # номер набора
+  - changeSet:
+      id: 2
       author: taksebekoder
-      changes: # контейнер (список) с изменениями
-        - createTable: # команда создания таблицы
+      changes:
+        - createTable:
             tableName: qr_codes
             columns:
               - column:
@@ -64,9 +64,9 @@ databaseChangeLog: # корневой элемент, здесь начинае�
                   type: UUID
                   constraints:
                     nullable: false
-                    foreignKeyName: foreig_key_participants #внешний ключ (любое имя)
-                    references: participants(id) # обозначил связь этого поля (participant_id) в этой таблице (qr_codes)
-                    # с полем id в таблице participants
+                    foreignKeyName: foreig_key_participants
+                    references: participants(id)
+
               - column:
                   name: is_active
                   type: BOOLEAN
