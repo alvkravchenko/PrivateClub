@@ -4,10 +4,8 @@ import com.example.privateclub.dto.ParticipantCreateDTO;
 import com.example.privateclub.dto.ParticipantResponseDTO;
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.integration.BaseIntegrationTest;
-import com.example.privateclub.repository.ParticipantRepository;
-import com.example.privateclub.repository.QrCodeRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,11 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ParticipantControllerTest extends BaseIntegrationTest {
 
-    @Autowired
-    private ParticipantRepository participantRepository;
 
-    @Autowired
-    private QrCodeRepository qrCodeRepository;
 
     @Test
     void createParticipant_ShouldReturnCreatedParticipant() throws Exception {
@@ -51,7 +45,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+
             "classpath:sql/participants.sql"
     })
     void getAllParticipants_ShouldReturnAllParticipants() throws Exception {
@@ -70,7 +64,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+
             "classpath:sql/participants.sql"
     })
     void getParticipantById_ShouldReturnParticipant() throws Exception {
@@ -88,7 +82,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+
             "classpath:sql/participants.sql"
     })
     void deleteParticipant_ShouldDeleteParticipant() throws Exception {

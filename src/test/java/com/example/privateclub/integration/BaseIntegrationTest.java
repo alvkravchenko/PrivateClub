@@ -1,5 +1,7 @@
 package com.example.privateclub.integration;
 
+import com.example.privateclub.repository.ParticipantRepository;
+import com.example.privateclub.repository.QrCodeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,11 +9,14 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -20,7 +25,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
         scripts = {"classpath:db/clean.sql"},
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
+@SqlMergeMode(MERGE)
 public abstract class BaseIntegrationTest {
+    @Autowired
+    protected ParticipantRepository participantRepository;
+
+    @Autowired
+    protected QrCodeRepository qrCodeRepository;
 
     @Container
     protected static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")

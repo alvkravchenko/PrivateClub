@@ -3,11 +3,7 @@ package com.example.privateclub.controller;
 import com.example.privateclub.dto.QrCodeCreateDTO;
 import com.example.privateclub.dto.QrCodeResponseDTO;
 import com.example.privateclub.integration.BaseIntegrationTest;
-import com.example.privateclub.repository.ParticipantRepository;
-import com.example.privateclub.repository.QrCodeRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,16 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class QrCodeControllerTest extends BaseIntegrationTest {
 
-    @Autowired
-    private ParticipantRepository participantRepository;
-
-    @Autowired
-    private QrCodeRepository qrCodeRepository;
 
     @Test
 
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+            "classpath:sql/participant_for_qr.sql",
             "classpath:sql/qr_codes.sql"
     })
     void createQrCode_ShouldReturnCreatedQrCode() throws Exception {
@@ -56,7 +47,7 @@ class QrCodeControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+            "classpath:sql/participant_for_qr.sql",
             "classpath:sql/qr_codes.sql"
     })
     void getQrCodesByParticipant_ShouldReturnAllQrCodes() throws Exception {
@@ -72,12 +63,19 @@ class QrCodeControllerTest extends BaseIntegrationTest {
         QrCodeResponseDTO[] response = objectMapper.readValue(responseJson, QrCodeResponseDTO[].class);
 
         assertThat(response).isNotNull();
+        assertThat(response.length).isEqualTo(2);
 
         long activeCount = Arrays.stream(response)
                 .filter(QrCodeResponseDTO::isActive)
                 .count();
 
         assertThat(activeCount).isEqualTo(1);
+
+        long inactiveCount = Arrays.stream(response)
+                .filter(qr -> !qr.isActive())
+                .count();
+
+        assertThat(inactiveCount).isEqualTo(1);
 
         for (QrCodeResponseDTO qr : response) {
             assertThat(qr.getParticipantId()).isEqualTo(participantId);
@@ -86,7 +84,7 @@ class QrCodeControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+            "classpath:sql/participant_for_qr.sql",
             "classpath:sql/qr_codes.sql"
     })
     void getQrCodeById_ShouldReturnQrCode() throws Exception {
@@ -112,7 +110,7 @@ class QrCodeControllerTest extends BaseIntegrationTest {
 
     @Test
     @Sql(scripts = {
-            "classpath:db/clean.sql",
+            "classpath:sql/participant_for_qr.sql",
             "classpath:sql/qr_codes.sql"
     })
     void deleteQrCode_ShouldSoftDeleteQrCode() throws Exception {
