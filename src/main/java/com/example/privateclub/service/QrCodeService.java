@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class QrCodeService {
 
@@ -32,12 +32,14 @@ public class QrCodeService {
         this.participantMapper = participantMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<QrCodeResponseDTO> findQrCodesByParticipantId(UUID participantId) {
         return repository.findByParticipantId(participantId).stream()
                 .map(qrCodeMapper::toResponseDTO)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public QrCodeResponseDTO findByQrCodeId(UUID id) {
         QrCode qrCode = repository.findByIdOrThrow(id);
         return qrCodeMapper.toResponseDTO(qrCode);
@@ -72,7 +74,6 @@ public class QrCodeService {
         return participantMapper.toResponseDTO(participant);
     }
 
-    @Transactional
     public void deleteQrCode(UUID id) {
         QrCode qrCode = repository.findByIdOrThrow(id);
         qrCode.setDeleted(true);

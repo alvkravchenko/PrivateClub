@@ -26,14 +26,12 @@ class QrCodeControllerTest extends BaseIntegrationTest {
     @Autowired
     private QrCodeRepository qrCodeRepository;
 
-    @BeforeEach
-    void cleanUp() {
-        qrCodeRepository.deleteAll();
-        participantRepository.deleteAll();
-    }
-
     @Test
-    @Sql("classpath:sql/qr_codes.sql")
+
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/qr_codes.sql"
+    })
     void createQrCode_ShouldReturnCreatedQrCode() throws Exception {
         UUID participantId = UUID.fromString("333e4567-e89b-12d3-a456-426614174002");
 
@@ -57,7 +55,10 @@ class QrCodeControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql("classpath:sql/qr_codes.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/qr_codes.sql"
+    })
     void getQrCodesByParticipant_ShouldReturnAllQrCodes() throws Exception {
         UUID participantId = UUID.fromString("333e4567-e89b-12d3-a456-426614174002");
 
@@ -84,7 +85,10 @@ class QrCodeControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql("classpath:sql/qr_codes.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/qr_codes.sql"
+    })
     void getQrCodeById_ShouldReturnQrCode() throws Exception {
         UUID qrCodeId = UUID.fromString("444e4567-e89b-12d3-a456-426614174003");
         UUID qrCodeValue = UUID.fromString("555e4567-e89b-12d3-a456-426614174004");
@@ -101,13 +105,16 @@ class QrCodeControllerTest extends BaseIntegrationTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(qrCodeId);
-        assertThat(response.getQrCode()).isEqualTo(qrCodeValue);
+        assertThat(response.getQrCodeValue()).isEqualTo(qrCodeValue);
         assertThat(response.getParticipantId()).isEqualTo(participantId);
         assertThat(response.isActive()).isTrue();
     }
 
     @Test
-    @Sql("classpath:sql/qr_codes.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/qr_codes.sql"
+    })
     void deleteQrCode_ShouldSoftDeleteQrCode() throws Exception {
         UUID qrCodeId = UUID.fromString("444e4567-e89b-12d3-a456-426614174003");
 

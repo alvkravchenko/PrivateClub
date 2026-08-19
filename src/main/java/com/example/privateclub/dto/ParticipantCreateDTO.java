@@ -15,7 +15,4 @@ public class ParticipantCreateDTO {
     private String email;
     private String phone;
 
-    public ParticipantCreateDTO() {
-
-    }
 }

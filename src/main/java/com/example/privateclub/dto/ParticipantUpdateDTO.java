@@ -15,7 +15,4 @@ public class ParticipantUpdateDTO {
     private String email;
     private String phone;
 
-    public ParticipantUpdateDTO() {
-
-    }
 }

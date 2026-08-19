@@ -6,7 +6,6 @@ import com.example.privateclub.entity.Participant;
 import com.example.privateclub.integration.BaseIntegrationTest;
 import com.example.privateclub.repository.ParticipantRepository;
 import com.example.privateclub.repository.QrCodeRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,19 +27,13 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     @Autowired
     private QrCodeRepository qrCodeRepository;
 
-    @BeforeEach
-    void cleanUp() {
-        qrCodeRepository.deleteAll();
-        participantRepository.deleteAll();
-    }
-
     @Test
     void createParticipant_ShouldReturnCreatedParticipant() throws Exception {
         ParticipantCreateDTO createDTO = new ParticipantCreateDTO();
         createDTO.setFirstName("Vasya");
         createDTO.setLastName("Petrov");
         createDTO.setEmail("petrov@webclient.ru");
-        createDTO.setPhone("+79001234567");
+        createDTO.setPhone("+79000004567");
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/participants")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -49,7 +42,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.firstName").value("Vasya"))
                 .andExpect(jsonPath("$.lastName").value("Petrov"))
                 .andExpect(jsonPath("$.email").value("petrov@webclient.ru"))
-                .andExpect(jsonPath("$.phone").value("+79001234567"))
+                .andExpect(jsonPath("$.phone").value("+79000004567"))
                 .andExpect(jsonPath("$.id").exists());
 
         List<Participant> saved = participantRepository.findAll();
@@ -57,7 +50,10 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql("classpath:sql/participants.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/participants.sql"
+    })
     void getAllParticipants_ShouldReturnAllParticipants() throws Exception {
         String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/participants")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -73,7 +69,10 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql("classpath:sql/participants.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/participants.sql"
+    })
     void getParticipantById_ShouldReturnParticipant() throws Exception {
         UUID participantId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
@@ -88,7 +87,10 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql("classpath:sql/participants.sql")
+    @Sql(scripts = {
+            "classpath:db/clean.sql",
+            "classpath:sql/participants.sql"
+    })
     void deleteParticipant_ShouldDeleteParticipant() throws Exception {
         UUID participantId = UUID.fromString("223e4567-e89b-12d3-a456-426614174001");
 

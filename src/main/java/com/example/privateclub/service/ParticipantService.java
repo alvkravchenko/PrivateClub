@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class ParticipantService {
 
@@ -26,12 +26,14 @@ public class ParticipantService {
         this.participantMapper = participantMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<ParticipantResponseDTO> findAllParticipant() {
         return repository.findAll().stream()
                 .map(participantMapper::toResponseDTO)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ParticipantResponseDTO findParticipantById(UUID id) {
         Participant participant = repository.findByIdOrThrow(id);
         return participantMapper.toResponseDTO(participant);
@@ -66,6 +68,7 @@ public class ParticipantService {
         repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public Participant findParticipantEntityById(UUID id) {
         return repository.findByIdOrThrow(id);
     }
