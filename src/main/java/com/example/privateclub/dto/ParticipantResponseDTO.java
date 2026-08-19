@@ -1,8 +1,10 @@
 package com.example.privateclub.dto;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+@Data
 public class ParticipantResponseDTO {
 
     private UUID id;

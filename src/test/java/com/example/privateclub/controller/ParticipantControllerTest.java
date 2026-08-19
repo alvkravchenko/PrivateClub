@@ -10,8 +10,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class ParticipantControllerTest extends BaseIntegrationTest {
 
@@ -35,71 +42,59 @@ class ParticipantControllerTest extends BaseIntegrationTest {
         createDTO.setEmail("petrov@webclient.ru");
         createDTO.setPhone("+79001234567");
 
-        ParticipantResponseDTO response = webClient.post()
-                .uri("/api/participants")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(objectMapper.writeValueAsString(createDTO))
-                .retrieve()
-                .bodyToMono(ParticipantResponseDTO.class)
-                .block();
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/participants")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Vasya"))
+                .andExpect(jsonPath("$.lastName").value("Petrov"))
+                .andExpect(jsonPath("$.email").value("petrov@webclient.ru"))
+                .andExpect(jsonPath("$.phone").value("+79001234567"))
+                .andExpect(jsonPath("$.id").exists());
 
-        assertThat(response).isNotNull();
-        assertThat(response.getFirstName()).isEqualTo("Vasya");
-        assertThat(response.getLastName()).isEqualTo("Petrov");
-        assertThat(response.getEmail()).isEqualTo("petrov@webclient.ru");
-        assertThat(response.getPhone()).isEqualTo("+79001234567");
-        assertThat(response.getId()).isNotNull();
-
-        Participant saved = participantRepository.findById(response.getId()).orElseThrow();
-        assertThat(saved.getFirstName()).isEqualTo("Vasya");
-        assertThat(saved.getEmail()).isEqualTo("petrov@webclient.ru");
+        List<Participant> saved = participantRepository.findAll();
+        assertThat(saved.size()).isEqualTo(1);
     }
 
     @Test
-    void getAllParticipants_ShouldReturnAllParticipants() {
-        Participant p1 = new Participant("Alex", "Sidorov", "alex@webclient.ru", "+79001112233");
-        Participant p2 = new Participant("Mary", "Ivanova", "maria@webclient.ru", "+79004445566");
-        participantRepository.save(p1);
-        participantRepository.save(p2);
+    @Sql("classpath:sql/participants.sql")
+    void getAllParticipants_ShouldReturnAllParticipants() throws Exception {
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/participants")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        ParticipantResponseDTO[] response = webClient.get()
-                .uri("/api/participants")
-                .retrieve()
-                .bodyToMono(ParticipantResponseDTO[].class)
-                .block();
+        ParticipantResponseDTO[] response = objectMapper.readValue(responseJson, ParticipantResponseDTO[].class);
 
         assertThat(response).isNotNull();
-        assertThat(response.length).isEqualTo(2);
+        assertThat(response.length).isEqualTo(4);
     }
 
     @Test
-    void getParticipantById_ShouldReturnParticipant() {
-        Participant participant = new Participant("Oleg", "Veshiy", "veshiy@webclient.ru", "+79007778899");
-        Participant saved = participantRepository.save(participant);
+    @Sql("classpath:sql/participants.sql")
+    void getParticipantById_ShouldReturnParticipant() throws Exception {
+        UUID participantId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
-        ParticipantResponseDTO response = webClient.get()
-                .uri("/api/participants/{id}", saved.getId())
-                .retrieve()
-                .bodyToMono(ParticipantResponseDTO.class)
-                .block();
-
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(saved.getId());
-        assertThat(response.getFirstName()).isEqualTo("Oleg");
-        assertThat(response.getEmail()).isEqualTo("veshiy@webclient.ru");
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/participants/{id}", participantId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.id").value(participantId.toString()))
+                .andExpect(jsonPath("$.firstName").value("Oleg"))
+                .andExpect(jsonPath("$.lastName").value("Veshiy"))
+                .andExpect(jsonPath("$.email").value("veshiy@webclient.ru"))
+                .andExpect(jsonPath("$.phone").value("+79007778899"));
     }
 
     @Test
-    void deleteParticipant_ShouldDeleteParticipant() {
-        Participant participant = new Participant("Для", "Удаления", "delete@webclient.ru", "+79001112233");
-        Participant saved = participantRepository.save(participant);
+    @Sql("classpath:sql/participants.sql")
+    void deleteParticipant_ShouldDeleteParticipant() throws Exception {
+        UUID participantId = UUID.fromString("223e4567-e89b-12d3-a456-426614174001");
 
-        webClient.delete()
-                .uri("/api/participants/{id}", saved.getId())
-                .retrieve()
-                .toBodilessEntity()
-                .block();
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/participants/{id}", participantId))
+                .andExpect(MockMvcResultMatchers.status().isOk());
 
-        assertThat(participantRepository.findById(saved.getId())).isEmpty();
+        assertThat(participantRepository.findById(participantId)).isEmpty();
     }
 }

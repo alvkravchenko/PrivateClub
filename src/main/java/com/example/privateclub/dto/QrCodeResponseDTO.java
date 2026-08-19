@@ -1,11 +1,11 @@
 package com.example.privateclub.dto;
 
-import com.example.privateclub.entity.QrCode;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-
+@Data
 public class QrCodeResponseDTO {
     private UUID id;
     private UUID qrCode;

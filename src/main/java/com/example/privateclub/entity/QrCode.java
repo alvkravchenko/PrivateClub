@@ -1,9 +1,7 @@
 package com.example.privateclub.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -14,8 +12,10 @@ import java.util.UUID;
 @Table(name = "qr_codes")
 @Getter
 @Setter
-@NoArgsConstructor // пустой конструктор
+@NoArgsConstructor
 @SQLRestriction("deleted = false")
+@Builder
+@AllArgsConstructor
 public class QrCode {
 
     @Id
@@ -23,14 +23,12 @@ public class QrCode {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-
     @Column(name = "qr_code", unique = true, nullable = false)
     private UUID qrCodeValue;
 
-    @ManyToOne // связи, много объектов класса QrCode погут ссылаться к одному объекту класса Participant
+    @ManyToOne
     @JoinColumn(name = "participant_id", nullable = false)
-    // @JoinColumn - внешний ключ (колонка participant_id в таблице qr_codes)
-    private Participant participant; // Сам объект участника (связь с таблицей participants)
+    private Participant participant;
 
     @Column(name = "is_active", nullable = false)
     private boolean isActive = true;
@@ -42,9 +40,7 @@ public class QrCode {
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
-
     public QrCode(Participant participant) {
         this.participant = participant;
     }
-
 }

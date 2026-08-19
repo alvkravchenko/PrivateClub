@@ -5,10 +5,9 @@ import com.example.privateclub.dto.ParticipantResponseDTO;
 import com.example.privateclub.dto.ParticipantUpdateDTO;
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.exception.ConflictException;
-import com.example.privateclub.exception.NotFoundException;
+import com.example.privateclub.exception.ParticipantNotFoundException;
 import com.example.privateclub.mappers.ParticipantMapper;
 import com.example.privateclub.repository.ParticipantRepository;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +16,6 @@ import java.util.UUID;
 
 @Transactional(readOnly = true)
 @Service
-
 public class ParticipantService {
 
     private final ParticipantRepository repository;
@@ -41,27 +39,21 @@ public class ParticipantService {
 
     @Transactional
     public ParticipantResponseDTO addParticipant(ParticipantCreateDTO createDTO) {
-
         if (repository.findByEmail(createDTO.getEmail()).isPresent()) {
             throw new ConflictException("Участник с таким Email существует");
         }
-        if (repository.findByPhone(createDTO.getPhone()).isPresent()) {
+        if (createDTO.getPhone() != null && repository.findByPhone(createDTO.getPhone()).isPresent()) {
             throw new ConflictException("Участник с таким phone существует");
         }
-        Participant participant = new Participant(createDTO.getFirstName(),
-                createDTO.getLastName(), createDTO.getEmail(), createDTO.getPhone());
+        Participant participant = participantMapper.toEntity(createDTO);
         Participant saved = repository.save(participant);
         return participantMapper.toResponseDTO(saved);
     }
 
     @Transactional
     public ParticipantResponseDTO updateParticipant(UUID id, ParticipantUpdateDTO updateDTO) {
-
         Participant participantEntity = findParticipantEntityById(id);
-        participantEntity.setFirstName(updateDTO.getFirstName());
-        participantEntity.setLastName(updateDTO.getLastName());
-        participantEntity.setEmail(updateDTO.getEmail());
-        participantEntity.setPhone(updateDTO.getPhone());
+        participantMapper.updateEntity(participantEntity, updateDTO);
         Participant saved = repository.save(participantEntity);
         return participantMapper.toResponseDTO(saved);
     }
@@ -69,7 +61,7 @@ public class ParticipantService {
     @Transactional
     public void deleteParticipant(UUID id) {
         if (!repository.existsById(id)) {
-            throw new NotFoundException("Участник с ID " + id + " не найден");
+            throw new ParticipantNotFoundException("Участник с ID " + id + " не найден");
         }
         repository.deleteById(id);
     }

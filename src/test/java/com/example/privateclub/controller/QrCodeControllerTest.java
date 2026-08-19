@@ -2,8 +2,6 @@ package com.example.privateclub.controller;
 
 import com.example.privateclub.dto.QrCodeCreateDTO;
 import com.example.privateclub.dto.QrCodeResponseDTO;
-import com.example.privateclub.entity.Participant;
-import com.example.privateclub.entity.QrCode;
 import com.example.privateclub.integration.BaseIntegrationTest;
 import com.example.privateclub.repository.ParticipantRepository;
 import com.example.privateclub.repository.QrCodeRepository;
@@ -11,7 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,94 +26,96 @@ class QrCodeControllerTest extends BaseIntegrationTest {
     @Autowired
     private QrCodeRepository qrCodeRepository;
 
-    private Participant testParticipant;
-
     @BeforeEach
     void cleanUp() {
         qrCodeRepository.deleteAll();
         participantRepository.deleteAll();
-
-        testParticipant = new Participant("Тест", "Участник", "test@qr.ru", "+79001112233");
-        testParticipant = participantRepository.save(testParticipant);
     }
 
     @Test
+    @Sql("classpath:sql/qr_codes.sql")
     void createQrCode_ShouldReturnCreatedQrCode() throws Exception {
-        QrCodeCreateDTO createDTO = new QrCodeCreateDTO();
-        createDTO.setParticipantId(testParticipant.getId());
+        UUID participantId = UUID.fromString("333e4567-e89b-12d3-a456-426614174002");
 
-        QrCodeResponseDTO response = webClient.post()
-                .uri("/api/qrcodes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(objectMapper.writeValueAsString(createDTO))
-                .retrieve()
-                .bodyToMono(QrCodeResponseDTO.class)
-                .block();
+        QrCodeCreateDTO createDTO = new QrCodeCreateDTO();
+        createDTO.setParticipantId(participantId);
+
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.post("/api/qrcodes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createDTO)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        QrCodeResponseDTO response = objectMapper.readValue(responseJson, QrCodeResponseDTO.class);
 
         assertThat(response).isNotNull();
         assertThat(response.getId()).isNotNull();
-        assertThat(response.getParticipantId()).isEqualTo(testParticipant.getId());
-        assertThat(response.isActive()).isTrue();
-
-        QrCode saved = qrCodeRepository.findById(response.getId()).orElseThrow();
-        assertThat(saved.getParticipant().getId()).isEqualTo(testParticipant.getId());
-        assertThat(saved.isActive()).isTrue();
-    }
-
-    @Test
-    void getQrCodesByParticipant_ShouldReturnAllQrCodes() {
-        QrCode qr1 = new QrCode(testParticipant);
-        qr1.setQrCodeValue(UUID.randomUUID());
-        QrCode qr2 = new QrCode(testParticipant);
-        qr2.setQrCodeValue(UUID.randomUUID());
-        qrCodeRepository.save(qr1);
-        qrCodeRepository.save(qr2);
-
-        QrCodeResponseDTO[] response = webClient.get()
-                .uri("/api/qrcodes/participant/{participantId}", testParticipant.getId())
-                .retrieve()
-                .bodyToMono(QrCodeResponseDTO[].class)
-                .block();
-
-        assertThat(response).isNotNull();
-        assertThat(response.length).isEqualTo(2);
-        assertThat(response[0].getParticipantId()).isEqualTo(testParticipant.getId());
-        assertThat(response[1].getParticipantId()).isEqualTo(testParticipant.getId());
-    }
-
-    @Test
-    void getQrCodeById_ShouldReturnQrCode() {
-        QrCode qrCode = new QrCode(testParticipant);
-        qrCode.setQrCodeValue(UUID.randomUUID());
-        QrCode saved = qrCodeRepository.save(qrCode);
-
-        QrCodeResponseDTO response = webClient.get()
-                .uri("/api/qrcodes/{id}", saved.getId())
-                .retrieve()
-                .bodyToMono(QrCodeResponseDTO.class)
-                .block();
-
-        assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(saved.getId());
-        assertThat(response.getQrCode()).isEqualTo(saved.getQrCodeValue());
-        assertThat(response.getParticipantId()).isEqualTo(testParticipant.getId());
+        assertThat(response.getParticipantId()).isEqualTo(participantId);
         assertThat(response.isActive()).isTrue();
     }
 
     @Test
-    void deleteQrCode_ShouldSoftDeleteQrCode() {
-        QrCode qrCode = new QrCode(testParticipant);
-        qrCode.setQrCodeValue(UUID.randomUUID());
-        QrCode saved = qrCodeRepository.save(qrCode);
+    @Sql("classpath:sql/qr_codes.sql")
+    void getQrCodesByParticipant_ShouldReturnAllQrCodes() throws Exception {
+        UUID participantId = UUID.fromString("333e4567-e89b-12d3-a456-426614174002");
 
-        assertThat(qrCodeRepository.findById(saved.getId())).isPresent();
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/qrcodes/participant/{participantId}", participantId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-        webClient.delete()
-                .uri("/api/qrcodes/{id}", saved.getId())
-                .retrieve()
-                .toBodilessEntity()
-                .block();
+        QrCodeResponseDTO[] response = objectMapper.readValue(responseJson, QrCodeResponseDTO[].class);
 
-        assertThat(qrCodeRepository.findById(saved.getId())).isEmpty();
+        assertThat(response).isNotNull();
+
+        long activeCount = Arrays.stream(response)
+                .filter(QrCodeResponseDTO::isActive)
+                .count();
+
+        assertThat(activeCount).isEqualTo(1);
+
+        for (QrCodeResponseDTO qr : response) {
+            assertThat(qr.getParticipantId()).isEqualTo(participantId);
+        }
+    }
+
+    @Test
+    @Sql("classpath:sql/qr_codes.sql")
+    void getQrCodeById_ShouldReturnQrCode() throws Exception {
+        UUID qrCodeId = UUID.fromString("444e4567-e89b-12d3-a456-426614174003");
+        UUID qrCodeValue = UUID.fromString("555e4567-e89b-12d3-a456-426614174004");
+        UUID participantId = UUID.fromString("333e4567-e89b-12d3-a456-426614174002");
+
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/qrcodes/{id}", qrCodeId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        QrCodeResponseDTO response = objectMapper.readValue(responseJson, QrCodeResponseDTO.class);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isEqualTo(qrCodeId);
+        assertThat(response.getQrCode()).isEqualTo(qrCodeValue);
+        assertThat(response.getParticipantId()).isEqualTo(participantId);
+        assertThat(response.isActive()).isTrue();
+    }
+
+    @Test
+    @Sql("classpath:sql/qr_codes.sql")
+    void deleteQrCode_ShouldSoftDeleteQrCode() throws Exception {
+        UUID qrCodeId = UUID.fromString("444e4567-e89b-12d3-a456-426614174003");
+
+        assertThat(qrCodeRepository.findById(qrCodeId)).isPresent();
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/qrcodes/{id}", qrCodeId))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        assertThat(qrCodeRepository.findById(qrCodeId)).isEmpty();
     }
 }

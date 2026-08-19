@@ -2,7 +2,7 @@ package com.example.privateclub.repository;
 
 
 import com.example.privateclub.entity.QrCode;
-import com.example.privateclub.exception.NotFoundException;
+import com.example.privateclub.exception.QrCodeNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 
@@ -15,7 +15,7 @@ public interface QrCodeRepository extends JpaRepository<QrCode, UUID> {
 
     default QrCode findByIdOrThrow(UUID id) {
         return findById(id)
-                .orElseThrow(() -> new NotFoundException("QR-код не найден"));
+                .orElseThrow(() -> new QrCodeNotFoundException("QR-код с id " + id + " не найден"));
     }
 
     List<QrCode> findByParticipantId(UUID participantId);

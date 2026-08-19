@@ -1,11 +1,9 @@
 package com.example.privateclub.repository;
 
 import com.example.privateclub.entity.Participant;
-import com.example.privateclub.entity.QrCode;
-import com.example.privateclub.exception.NotFoundException;
+import com.example.privateclub.exception.ParticipantNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,7 +14,7 @@ public interface ParticipantRepository extends JpaRepository<Participant, UUID> 
 
     default Participant findByIdOrThrow(UUID id) {
         return findById(id)
-                .orElseThrow(() -> new NotFoundException("Участник с id " + id + " не найден"));
+                .orElseThrow(() -> new ParticipantNotFoundException("Участник с id " + id + " не найден"));
     }
 
 }
