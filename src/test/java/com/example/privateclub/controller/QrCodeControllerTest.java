@@ -8,17 +8,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.util.Arrays;
 import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class QrCodeControllerTest extends BaseIntegrationTest {
 
-
     @Test
-
     @Sql(scripts = {
             "classpath:sql/participant_for_qr.sql",
             "classpath:sql/qr_codes.sql"

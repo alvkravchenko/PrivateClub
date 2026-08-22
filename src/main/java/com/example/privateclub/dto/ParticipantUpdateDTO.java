@@ -14,5 +14,4 @@ public class ParticipantUpdateDTO {
     @Email(message = "Некорректный формат email")
     private String email;
     private String phone;
-
 }

@@ -37,7 +37,6 @@ databaseChangeLog:
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
 
-
   - changeSet:
       id: 2
       author: taksebekoder
@@ -75,4 +74,3 @@ databaseChangeLog:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
-

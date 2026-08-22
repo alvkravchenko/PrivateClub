@@ -1,6 +1,7 @@
 package com.example.privateclub.exception;
 
 public class ErrorResponse {
+
     private String message;
 
     public ErrorResponse(String message) {

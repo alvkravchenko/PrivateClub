@@ -5,21 +5,16 @@ import com.example.privateclub.dto.ParticipantResponseDTO;
 import com.example.privateclub.entity.Participant;
 import com.example.privateclub.integration.BaseIntegrationTest;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
 import java.util.List;
 import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 class ParticipantControllerTest extends BaseIntegrationTest {
-
-
 
     @Test
     void createParticipant_ShouldReturnCreatedParticipant() throws Exception {
@@ -44,10 +39,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {
-
-            "classpath:sql/participants.sql"
-    })
+    @Sql("classpath:sql/participants.sql")
     void getAllParticipants_ShouldReturnAllParticipants() throws Exception {
         String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/participants")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -63,10 +55,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {
-
-            "classpath:sql/participants.sql"
-    })
+    @Sql("classpath:sql/participants.sql")
     void getParticipantById_ShouldReturnParticipant() throws Exception {
         UUID participantId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
@@ -81,10 +70,7 @@ class ParticipantControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    @Sql(scripts = {
-
-            "classpath:sql/participants.sql"
-    })
+    @Sql("classpath:sql/participants.sql")
     void deleteParticipant_ShouldDeleteParticipant() throws Exception {
         UUID participantId = UUID.fromString("223e4567-e89b-12d3-a456-426614174001");
 

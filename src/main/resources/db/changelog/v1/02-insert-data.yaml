@@ -62,13 +62,3 @@ databaseChangeLog:
               - column:
                  name: is_active
                  value: "true"
-
-
-
-
-
-
-
-
-
-

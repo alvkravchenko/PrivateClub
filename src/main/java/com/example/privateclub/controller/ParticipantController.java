@@ -6,7 +6,6 @@ import com.example.privateclub.dto.ParticipantUpdateDTO;
 import com.example.privateclub.service.ParticipantService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -16,10 +15,8 @@ public class ParticipantController {
 
     private final ParticipantService service;
 
-
     public ParticipantController(ParticipantService service) {
         this.service = service;
-
     }
 
     @GetMapping
@@ -46,5 +43,4 @@ public class ParticipantController {
     public void deleteParticipant(@PathVariable UUID id) {
         service.deleteParticipant(id);
     }
-
 }

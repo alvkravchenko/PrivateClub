@@ -15,7 +15,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -25,8 +24,10 @@ import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE
         scripts = {"classpath:db/clean.sql"},
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
+
 @SqlMergeMode(MERGE)
 public abstract class BaseIntegrationTest {
+
     @Autowired
     protected ParticipantRepository participantRepository;
 
