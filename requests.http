@@ -1,0 +1,61 @@
+GET http://localhost:8080/api/participants
+###
+GET http://localhost:8080/api/participants/52b29602-9b79-44b2-a536-d73ef8f47f99
+###
+POST http://localhost:8080/api/participants
+Content-Type: application/json
+
+{
+  "firstName": "Atreus",
+  "lastName": "Godofwarovich",
+  "email": "atreyska@gow.ru",
+  "phone": "+7-999-111-2223"
+}
+###
+PUT http://localhost:8080/api/participants/52b29602-9b79-44b2-a536-d73ef8f47f99
+Content-Type: application/json
+
+{
+  "firstName": "Atreus",
+  "lastName": "Godofwarovich",
+  "email": "atreyska@gow.ru",
+  "phone": "+7-999-111-2223"
+}
+###
+DELETE http://localhost:8080/api/participants/a05975fb-790c-4094-9db6-62913f647860
+
+
+###
+GET http://localhost:8080/api/qrcodes
+
+###
+GET http://localhost:8080/api/qrcodes/f0b4913e-98c6-42de-9041-a7646335e77e
+
+###
+POST http://localhost:8080/api/qrcodes
+Content-Type: application/json
+
+{
+  "participantId": "26380da0-320e-4e30-8442-07aebef26e7b"
+}
+
+###
+POST http://localhost:8080/api/qrcodes/enter/8d0bff17-209f-443c-8089-d93b1cd71c4f
+
+###
+DELETE http://localhost:8080/api/qrcodes/f0b4913e-98c6-42de-9041-a7646335e77e
+
+###
+GET http://localhost:8080/api/participants/11111111-1111-1111-1111-111111111111
+
+###
+POST http://localhost:8080/api/participants
+Content-Type: application/json
+
+{
+  "lastName": "Петров",
+  "email": "petrov@club.ru"
+}
+
+###
+POST http://localhost:8080/api/qrcodes/enter/11111111-1111-1111-1111-111111111111

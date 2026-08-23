@@ -1,0 +1,76 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: taksebekoder
+      changes:
+        - createTable:
+            tableName: participants
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(15)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+
+  - changeSet:
+      id: 2
+      author: taksebekoder
+      changes:
+        - createTable:
+            tableName: qr_codes
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: qr_code
+                  type: UUID
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: participant_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+                    foreignKeyName: foreig_key_participants
+                    references: participants(id)
+
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
